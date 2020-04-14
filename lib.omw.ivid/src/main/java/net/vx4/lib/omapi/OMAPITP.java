@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 adesso AG
+ * Copyright 2017-2020 adesso SE
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the
  * European Commission - subsequent versions of the EUPL (the "Licence"); You may
@@ -80,12 +80,13 @@ public final class OMAPITP implements TransportProvider {
         System.out.println("OMAPITP: seTP = [" + seTP + "]");
         System.out.println("OMAPITP: seTP.getParent = [" + seTP.getParent() + "]");
 
-        // if ("T=0".equals(card.getProtocol())) {
-        tp = new C2Transport(seTP);
-        // tp = seTP;
-        // }
+        if ((((ChannelTransportProvider) seTP).getProtocol() & 0x0F) == 0x00) {
+            tp = new C2Transport(seTP); // use T=0 ENVELOPE framing for T=0
+        } else {
+            tp = seTP;
+        }
 
-        System.out.println(tp);
+        System.out.println("OMAPITP: tp = " + tp);
         plainTP = tp;
     }
 

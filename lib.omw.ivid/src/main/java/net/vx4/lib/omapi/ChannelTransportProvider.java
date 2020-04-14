@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 adesso AG
+ * Copyright 2017-2020 adesso SE
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the
  * European Commission - subsequent versions of the EUPL (the "Licence"); You may
@@ -27,8 +27,8 @@ import org.simalliance.openmobileapi.Channel;
  */
 public class ChannelTransportProvider implements TransportProvider {
 
-    private final byte channelId;
-    private Channel channel = null;
+    private final byte channelId, protocol, appletState;
+    private final Channel channel;
     private int lastSW = -1;
 
     /**
@@ -39,6 +39,8 @@ public class ChannelTransportProvider implements TransportProvider {
         this.channel = channel;
         final byte[] selRes = this.channel.getSelectResponse();
         channelId = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[0];
+        protocol = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[1];
+        appletState = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[2];
     }
 
 
@@ -66,6 +68,13 @@ public class ChannelTransportProvider implements TransportProvider {
         return channelId;
     }
 
+    public byte getProtocol() {
+        return protocol;
+    }
+
+    public byte getAppletState() {
+        return appletState;
+    }
 
     @Override
     public byte[] transmit(final byte[] apdu) {

@@ -4,9 +4,11 @@
     <groupId>net.vx4</groupId>
     <artifactId>lib.omw</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>OMW</name>
     <description>OMAPI Wrapper</description>
     <packaging>pom</packaging>
+
     <modules>
         <module>lib.omw.android</module>
         <module>lib.omw.omapi</module>

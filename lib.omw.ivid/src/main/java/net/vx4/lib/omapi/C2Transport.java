@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 adesso AG
+ * Copyright 2017-2020 adesso SE
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the
  * European Commission - subsequent versions of the EUPL (the "Licence"); You may
@@ -27,7 +27,8 @@ public class C2Transport implements TransportProvider {
 
     private final TransportProvider parent;
     private final short APDULen = 261; // T=0 limit
-    private byte envCLA = 0x10;
+    // private byte envCLA = 0x10;
+    private byte envCLA = 0x00; // stick to ETSI-style without command chaining as we're on T=0 anyway
     private byte envCLAlast = 0x00;
     private byte envINS = (byte) 0xC2;
     private short C2Len = 255;
@@ -57,12 +58,14 @@ public class C2Transport implements TransportProvider {
 
         if (apdu.length > APDULen || apdu.length > 5 && apdu[4] == 0) {
             // sanitize APDU encoding
-            String a2 = Hex.toString(apdu);
-            if (apdu[5] == 0) {
+            final short lc = (short) (((apdu[5] & 0xFF) << 8) + (apdu[6] & 0xFF));
+            String a2 = Hex.toString(apdu, 0, 7 + lc); // shorten APDU, strip off Le
+
+            // if (apdu[5] == 0) { // shorten APDU if length < 0x0100
+            if (lc < 0x0100) { // shorten APDU if length < 0x0100
                 a2 = a2.substring(0, 8) + a2.substring(12);
             }
-
-            apdu = Hex.fromString(a2.endsWith("0000") ? a2.substring(0, a2.length() - 4) : a2);
+            apdu = Hex.fromString(a2);
 
             if (apdu.length > APDULen) {
                 int sent = 0;
@@ -70,17 +73,20 @@ public class C2Transport implements TransportProvider {
                 while (apdu.length - sent > 0) {
                     final int len = apdu.length - sent > C2Len ? C2Len : apdu.length - sent;
                     if (apdu.length - (sent + len) > 0) {
-                        last = parent.transmit(
-                                Hex.fromString(Hex.toString(new byte[]{envCLA, envINS, 0, 0, (byte) len})
-                                        + Hex.toString(apdu, sent, len & 0xFF)));
+                        last = parent.transmit(Hex.fromString(Hex.toString(new byte[]{envCLA, envINS, 0, 0, (byte) len})
+                                + Hex.toString(apdu, sent, len & 0xFF)));
                     } else {
-                        last = parent.transmit(
-                                Hex.fromString(
-                                        Hex.toString(new byte[]{envCLAlast, envINS, 0, 0, (byte) len})
-                                                + Hex.toString(apdu, sent, len & 0xFF)));
+                        last = parent.transmit(Hex.fromString(Hex.toString(new byte[]{envCLAlast, envINS, 0, 0, (byte) len})
+                                + Hex.toString(apdu, sent, len & 0xFF)));
                     }
                     sent += len;
                 }
+
+                // ETSI-style, long variant with no data but SW OK send another empty ENVELOPE for EOF
+                if (envCLA == 0x00 && last != null && last.length == 0 && parent.lastSW() == 0x9000) {
+                    last = parent.transmit(new byte[] { envCLAlast, envINS, 0, 0, 0 });
+                }
+
                 return last;
             }
         }
