@@ -20,20 +20,27 @@ package net.vx4.lib.omapi;
  * ENVELOPE (C2) / GET RESPONSE (C0) APDUs. Hence its name as the response is handled by the underlying stack and this
  * class "only" cuts long APDUs into shorter ENVELOPE ADPUS.
  *
+ * It is currently expected that GET RESPONSE handling is done under the hood. There exist only rare fails, which
+ * are assumed to be implementation fails. Might be extended if there is a reasonable demand. (Don't support bugs.)
+ *
  * @author kahlo, 2018
  * @version $Id$
  */
 public class C2Transport implements TransportProvider {
 
-    private final TransportProvider parent;
     private final short APDULen = 261; // T=0 limit
-    // private byte envCLA = 0x10;
+    private final TransportProvider parent;
     private byte envCLA = 0x00; // stick to ETSI-style without command chaining as we're on T=0 anyway
     private byte envCLAlast = 0x00;
     private byte envINS = (byte) 0xC2;
     private short C2Len = 255;
 
-
+    /**
+     * Create an ENVELOPE transport provider from a physical layer transport provider such as
+     * ChannelTransportProvider.
+     *
+     * @param parent
+     */
     public C2Transport(final TransportProvider parent) {
         if (parent == null) {
             throw new NullPointerException("parent transport provider required");
@@ -42,6 +49,17 @@ public class C2Transport implements TransportProvider {
     }
 
 
+    /**
+     * Transmit an extended length APDU over a physical link layer.
+     * (Usually and intended for T=0, but sometimes necessary for T=1 over SWP also.)
+     *
+     * NOTE: If not using secure messaging but plain-text extended length APDUs and the other end is a card that
+     * responds "early" with intended no data, the additional envelope might result in an erroneous 6700.
+     * Only real fix: don't do it.
+     *
+     * @param apdu - APDU to be transmitted
+     * @return
+     */
     @Override
     public byte[] transmit(byte[] apdu) {
         final byte channelId = ((ChannelTransportProvider) this.getParent()).getChannelId();
@@ -82,7 +100,7 @@ public class C2Transport implements TransportProvider {
                     sent += len;
                 }
 
-                // ETSI-style, long variant with no data but SW OK send another empty ENVELOPE for EOF
+                // ETSI-style, long variant with no data but SW OK send another empty ENVELOPE for EOF.
                 if (envCLA == 0x00 && last != null && last.length == 0 && parent.lastSW() == 0x9000) {
                     last = parent.transmit(new byte[] { envCLAlast, envINS, 0, 0, 0 });
                 }
@@ -92,6 +110,44 @@ public class C2Transport implements TransportProvider {
         }
 
         return parent.transmit(apdu);
+    }
+
+    /**
+     * change maximum length of ENVELOPE frame
+     * @param len
+     */
+    public void setLength(final byte len) {
+        if (len <= 255) {
+            C2Len = (short) (len & 0xFF);
+        }
+    }
+
+    /**
+     * Set class byte values for "first" / "ongoing" frames and "only" / "last" frame.
+     *
+     * ETSI as well as JavaCard reference implementations stick to "00" for both, the last frame is detected
+     * either by a length smaller than 0xFF or a single frame with length 00. Frames with length 00 are
+     * mandatory for some implementations. That's why some assumptions are made if an empty frame should be
+     * sent.
+     *
+     * ISO on the hand chooses command chaining mode, which is supported in hand crafted implementations, tolerated by
+     * some JCREs and denied by some others. setCLA((byte) 0x10, (byte) 0x00) enforces ISO mode.
+     *
+     * @param firstCLA
+     * @param lastCLA
+     */
+    public void setCLA(final byte firstCLA, final byte lastCLA) {
+        envCLA = firstCLA;
+        envCLAlast = lastCLA;
+    }
+
+    /**
+     * Set a custom instruction byte values for ENVELOPEs. Very unusual.
+     *
+     * @param INS
+     */
+    public void setINS(final byte INS) {
+        envINS = INS;
     }
 
     @Override

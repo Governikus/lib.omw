@@ -41,6 +41,9 @@ public class ChannelTransportProvider implements TransportProvider {
         channelId = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[0];
         protocol = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[1];
         appletState = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[2];
+
+        //is often "null" anyway, might be a decision helper with some secure elements
+        //atr = channel.getSession().getATR();
     }
 
 
@@ -64,18 +67,34 @@ public class ChannelTransportProvider implements TransportProvider {
     }
 
 
+    /**
+     *
+     * @return
+     */
     public byte getChannelId() {
         return channelId;
     }
 
+    /**
+     *
+     * @return
+     */
     public byte getProtocol() {
         return protocol;
     }
 
+    /**
+     *
+     *
+     * @return
+     */
     public byte getAppletState() {
         return appletState;
     }
 
+    /**
+     *
+     */
     @Override
     public byte[] transmit(final byte[] apdu) {
         lastSW = -1;
