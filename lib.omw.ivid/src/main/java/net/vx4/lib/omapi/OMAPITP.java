@@ -90,7 +90,7 @@ public final class OMAPITP implements TransportProvider {
         final byte protocol = ((ChannelTransportProvider) seTP).getProtocol();
         if ((protocol & 0x0F) == 0x00) { // use T=0 ENVELOPE framing for T=0 on any physical link
             tp = new C2Transport(seTP);
-        } else if(protocol == 0xC1) { // we got CLF HCI over SWP with T=1, doesn't behave
+        } else if(protocol == HCI_T1) { // we got CLF HCI over SWP with T=1, doesn't behave
             tp = new C2Transport(seTP);
             ((C2Transport) tp).setCLA((byte) 0x10, (byte) 0x00); // no ext. length, enforce ISO ENVELOPE of applet
         } else { // i.e. 0xD1 -> SCI2C or GP SPI/I2C, use plain link layer
