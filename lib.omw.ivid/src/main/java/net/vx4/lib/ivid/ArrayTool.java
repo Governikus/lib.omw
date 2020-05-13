@@ -59,7 +59,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 /**
  * <p>

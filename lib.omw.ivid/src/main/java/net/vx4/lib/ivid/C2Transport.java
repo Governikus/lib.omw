@@ -13,7 +13,7 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the Licence for the
  * specific language governing permissions and limitations under the Licence.
  */
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 /**
  * C2Transport is an implementation of a transport provider stack element to handle extended length APDU mapping to

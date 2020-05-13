@@ -130,7 +130,7 @@
  * @author Systemics Ltd
  * @since Cryptix 2.2.0a, 2.2.2
  */
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 /**
  * Static functions for converting to and from hexadecimal strings.
