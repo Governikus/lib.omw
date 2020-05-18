@@ -31,17 +31,21 @@ public class ChannelTransportProvider implements TransportProvider {
 
 
     /**
-     * official constructor
+     * Constructor based on SEAL.Channel. If the previously selected applet does not respond with proprietary FCI data
+     * to determine logical channel ID, protocol and state defaults are used. (T = 0 and basic channel)
      *
      * @param channel
      */
     public ChannelTransportProvider(final SEAL.Channel channel) {
         this.channel = channel;
-        final byte[] selRes = this.channel.getSelectResponse();
-        if (selRes != null && selRes.length > 0) {
-            this.channelId = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[0];
-            this.protocol = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[1];
-            this.appletState = TLV.get(TLV.get(selRes, (byte) 0x6F), (byte) 0x85)[2];
+        byte[] info = this.channel.getSelectResponse();
+        info = info == null ? null : TLV.get(info, (byte) 0x6F);
+        info = info == null ? null : TLV.get(info, (byte) 0x85);
+
+        if (info != null && info.length >= 3) {
+            this.channelId = info[0];
+            this.protocol = info[1];
+            this.appletState = info[2];
         } else {
             this.channelId = this.protocol = this.appletState = 0;
         }
