@@ -13,7 +13,7 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the Licence for the
  * specific language governing permissions and limitations under the Licence.
  */
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 import org.junit.*;
 
@@ -69,7 +69,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#OMAPITP(org.simalliance.openmobileapi.Channel)}.
+     * Test method for {@link IVIDITP#IVIDITP(org.simalliance.openmobileapi.Channel)}.
      */
     @Test
     public final void testOMAPITPChannel() {
@@ -78,7 +78,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#OMAPITP(net.vx4.lib.omapi.TransportProvider)}.
+     * Test method for {@link IVIDITP#IVIDITP(net.vx4.lib.ivid.TransportProvider)}.
      */
     @Test
     public final void testOMAPITPTransportProvider() {
@@ -87,7 +87,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#setCallbackHandler(net.vx4.lib.omapi.OMAPITP.CallbackHandler)}.
+     * Test method for {@link IVIDITP#setCallbackHandler(IVIDITP.CallbackHandler)}.
      */
     @Test
     public final void testSetCallbackHandler() {
@@ -96,7 +96,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#process(byte[])}.
+     * Test method for {@link IVIDITP#process(byte[])}.
      */
     @Test
     public final void testProcess() {
@@ -105,7 +105,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#getParent()}.
+     * Test method for {@link IVIDITP#getParent()}.
      */
     @Test
     public final void testGetParent() {
@@ -114,7 +114,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#transmit(byte[])}.
+     * Test method for {@link IVIDITP#transmit(byte[])}.
      */
     @Test
     public final void testTransmit() {
@@ -123,7 +123,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#lastSW()}.
+     * Test method for {@link IVIDITP#lastSW()}.
      */
     @Test
     public final void testLastSW() {
@@ -132,7 +132,7 @@ public class OMAPITest {
 
 
     /**
-     * Test method for {@link net.vx4.lib.omapi.OMAPITP#close()}.
+     * Test method for {@link IVIDITP#close()}.
      */
     @Test
     public final void testClose() {

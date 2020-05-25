@@ -3,13 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.vx4</groupId>
     <artifactId>lib.omw</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.1</version>
+
     <name>OMW</name>
     <description>OMAPI Wrapper</description>
     <packaging>pom</packaging>
+
     <modules>
         <module>lib.omw.android</module>
-        <module>lib.omw.omapi</module>
         <module>lib.omw.ivid</module>
     </modules>
 </project>

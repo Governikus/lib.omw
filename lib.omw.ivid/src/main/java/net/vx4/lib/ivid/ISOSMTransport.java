@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 adesso AG
+ * Copyright 2017-2020 adesso SE
  *
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved by the
  * European Commission - subsequent versions of the EUPL (the "Licence"); You may
@@ -13,7 +13,7 @@
  * CONDITIONS OF ANY KIND, either express or implied. See the Licence for the
  * specific language governing permissions and limitations under the Licence.
  */
-/**
+/*
  * COPYRIGHT (C) 2010, 2011, 2012, 2013, 2014 AGETO Innovation GmbH
  * <p>
  * Authors Christian Kahlo, Ralf Wondratschek
@@ -58,11 +58,12 @@
  * zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe
  * <http://www.gnu.org/licenses/>.
  */
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 
@@ -213,7 +214,7 @@ public class ISOSMTransport implements TransportProvider {
      */
     private byte[] getIV() {
         try {
-            ivBuf.rewind();
+            ((Buffer) ivBuf).rewind(); // JDK 9+ fix
             ivBuf.putLong(0);
             ivBuf.putLong(++ssc);
             return ivBuf.array();

@@ -58,10 +58,9 @@
  * zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe
  * <http://www.gnu.org/licenses/>.
  */
-package net.vx4.lib.omapi;
+package net.vx4.lib.ivid;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
